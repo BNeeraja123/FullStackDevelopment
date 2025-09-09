@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coorg Natural – Static Demo (HTML + CSS only)</title>
+  <meta name="description" content="Static replica using only HTML and CSS. No JavaScript, no external frameworks." />
+  <link rel="icon" href="https://live.codenish.com/static/media/web-favicon.png" />
+
+  <style>
+    /* ====== Base / Reset ====== */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji"; color: #222; }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; text-decoration: none; }
+    ul { margin: 0; padding: 0; list-style: none; }
+    :root {
+      --container: 1200px;
+      --accent: #0f6efe;
+      --bg: #ffffff;
+      --muted: #6b7280; /* gray-500 */
+      --border: #e5e7eb; /* gray-200 */
+      --shadow: 0 4px 10px rgba(0,0,0,.06);
+      --radius: 14px;
+    }
+    .container { max-width: var(--container); margin-inline: auto; padding-inline: 16px; }
+    .pill { display: inline-block; padding: 2px 10px; font-size: 12px; border: 1px solid var(--border); border-radius: 999px; color: #374151; }
+
+    /* ====== Header ====== */
+    .header-top { background: #f8fafc; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .header-top .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 0; }
+    .header-top .left, .header-top .right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+    .header-main { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border); z-index: 10; }
+    .header-main .wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; padding: 14px 0; }
+    .logo { height: 44px; display: flex; align-items: center; }
+    .logo img { height: 44px; width: auto; }
+
+    /* Nav (CSS-only dropdowns) */
+    .nav { display: flex; align-items: center; gap: 18px; }
+    .nav > li { position: relative; }
+    .nav > li > a { padding: 10px 8px; display: inline-block; border-radius: 8px; }
+    .nav > li > a:hover { background: #f1f5f9; }
+    .dropdown { position: absolute; left: 0; top: 100%; min-width: 220px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); padding: 8px; display: none; }
+    .dropdown a { display: block; padding: 8px 10px; border-radius: 8px; color: #111827; }
+    .dropdown a:hover { background: #f8fafc; }
+    .nav > li:hover .dropdown { display: block; }
+
+    /* Search (static) */
+    .search { justify-self: end; display: flex; gap: 8px; }
+    .search input { width: min(320px, 50vw); padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; }
+    .search button { padding: 10px 14px; border: 1px solid var(--border); background: #f8fafc; border-radius: 10px; cursor: pointer; }
+
+    /* ====== Hero (static image instead of JS slider) ====== */
+    .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+    .hero .frame { aspect-ratio: 16 / 7; max-height: 520px; display: grid; place-items: center; }
+    .hero .frame img { width: 100%; height: 100%; object-fit: cover; }
+    .hero .dots { position: absolute; inset: auto 0 12px; display: flex; gap: 6px; justify-content: center; }
+    .hero .dot { width: 8px; height: 8px; border-radius: 999px; background: #e5e7eb; }
+    .hero .dot.active { background: var(--accent); }
+
+    /* ====== Sections ====== */
+    .section { padding: 44px 0; }
+    .section-header { text-align: center; margin-bottom: 22px; }
+    .section-title { font-size: clamp(20px, 2.4vw, 28px); font-weight: 700; }
+    .section-sub { color: var(--muted); max-width: 800px; margin: 8px auto 0; font-size: 14px; }
+
+    /* Product grid */
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 992px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 720px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .card { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--bg); box-shadow: var(--shadow); display: flex; flex-direction: column; }
+    .card .thumb { position: relative; overflow: hidden; background: #fff; }
+    .card .thumb img { transition: transform .35s ease; }
+    .card:hover .thumb img { transform: scale(1.05); }
+    .card .body { padding: 12px; display: grid; gap: 8px; }
+    .name a { font-weight: 600; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .price { display: flex; align-items: center; gap: 8px; }
+    .price .new { font-weight: 700; }
+    .price .old { color: var(--muted); text-decoration: line-through; font-size: 14px; }
+    .btn { display: inline-block; background: var(--accent); color: #fff; border-radius: 10px; padding: 10px 12px; font-weight: 600; text-align: center; }
+
+    /* Blog grid */
+    .blog .meta { display: flex; gap: 10px; align-items: center; color: var(--muted); font-size: 13px; }
+
+    /* ====== Footer ====== */
+    footer { background: #0b1220; color: #cbd5e1; }
+    .footer-top { padding: 36px 0 10px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .footer-cols { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr; gap: 20px; }
+    @media (max-width: 960px) { .footer-cols { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .footer-cols { grid-template-columns: 1fr; } }
+    .footer-title { font-weight: 700; color: #e2e8f0; margin-bottom: 10px; }
+    .footer-links a { display: block; padding: 6px 0; color: #cbd5e1; }
+    .footer-links a:hover { color: #fff; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 0 28px; flex-wrap: wrap; }
+    .payments { display: flex; gap: 12px; align-items: center; }
+
+    /* Small helper utilities */
+    .mt-2{margin-top:.5rem} .mt-3{margin-top:.75rem} .mt-4{margin-top:1rem}
+  </style>
+</head>
+<body>
+  <!-- ===== Top strip ===== -->
+  <div class="header-top">
+    <div class="container topbar">
+      <div class="left">
+        <span class="pill"><img src="https://live.codenish.com/images/flag/en.png" alt="EN" style="height:14px;vertical-align:-2px;margin-right:6px"> English</span>
+        <span class="pill">IND (₹)</span>
+      </div>
+      <div class="right">
+        <a href="#">News</a>
+        <span style="opacity:.6">|</span>
+        <a href="tel:7829040989">Call: 7829040989</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Main header ===== -->
+  <header class="header-main">
+    <div class="container wrap">
+      <a class="logo" href="#">
+        <img src="https://live.codenish.com/static/media/web-logo-final-1.png" alt="Coorg Natural" />
+      </a>
+
+      <nav aria-label="Main navigation">
+        <ul class="nav">
+          <li><a href="#">Home</a></li>
+          <li>
+            <a href="#">Women</a>
+            <div class="dropdown">
+              <a href="#">Casual Wear</a>
+              <a href="#">Formal Wear</a>
+            </div>
+          </li>
+          <li>
+            <a href="#">Men</a>
+            <div class="dropdown">
+              <a href="#">Casual Wear</a>
+              <a href="#">Business Wear</a>
+            </div>
+          </li>
+          <li>
+            <a href="#">Children</a>
+            <div class="dropdown">
+              <a href="#">Boys</a>
+              <a href="#">Girls</a>
+            </div>
+          </li>
+          <li>
+            <a href="#">Sports</a>
+            <div class="dropdown">
+              <a href="#">Sports Clothing</a>
+              <a href="#">Sports Accessories</a>
+            </div>
+          </li>
+          <li>
+            <a href="#">Accessories</a>
+            <div class="dropdown">
+              <a href="#">Hats</a>
+              <a href="#">Scarves</a>
+            </div>
+          </li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </nav>
+
+      <form class="search" role="search" onsubmit="return false">
+        <input type="search" placeholder="Search" aria-label="Search" />
+        <button type="button" aria-label="Search">Search</button>
+      </form>
+    </div>
+  </header>
+
+  <!-- ===== Hero (static) ===== -->
+  <section class="hero">
+    <div class="frame">
+      <!-- Pick any one hero from originals (no JS slider). Change src to swap. -->
+      <img src="https://live.codenish.com/static/media/cup_final_1920x880.jpg" alt="Hero banner" />
+    </div>
+    <div class="dots" aria-hidden="true">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot active"></div>
+      <div class="dot"></div>
+    </div>
+  </section>
+
+  <!-- ===== Feature Products ===== -->
+  <section class="section">
+    <div class="container">
+      <header class="section-header">
+        <h2 class="section-title">Feature Product</h2>
+        <p class="section-sub">Embrace your style with this chic garment, blending comfort and elegance. A must have for any occasion, it's the perfect addition to your wardrobe.</p>
+      </header>
+
+      <div class="grid">
+        <!-- Product 1 -->
+        <article class="card">
+          <div class="thumb">
+            <a href="#"><img src="https://live.codenish.com/cache/images/demo/product/5-600x600.png" alt="Colorful Tassel Scarf" /></a>
+          </div>
+          <div class="body">
+            <h3 class="name"><a href="#">Colorful Tassel Fashion Personalized Scarf Bright and Colorful</a></h3>
+            <div class="price"><span class="old">₹2,199.99</span> <span class="new">₹199.99</span></div>
+            <a class="btn" href="#">Add to cart</a>
+          </div>
+        </article>
+        <!-- Product 2 -->
+        <article class="card">
+          <div class="thumb">
+            <a href="#"><img src="https://live.codenish.com/cache/images/demo/product/1-600x600.png" alt="Galaxy Glittering Evening Gown" /></a>
+          </div>
+          <div class="body">
+            <h3 class="name"><a href="#">Galaxy Glittering Evening Gown Shines Everywhere</a></h3>
+            <div class="price"><span class="old">₹112.00</span> <span class="new">₹111.00</span></div>
+            <a class="btn" href="#">Add to cart</a>
+          </div>
+        </article>
+        <!-- Product 3 -->
+        <article class="card">
+          <div class="thumb">
+            <a href="#"><img src="https://live.codenish.com/cache/images/demo/product/2-600x600.png" alt="Urban Elite Suit Jacket" /></a>
+          </div>
+          <div class="body">
+            <h3 class="name"><a href="#">Urban Elite Fashion Suit Jacket Classic Cut</a></h3>
+            <div class="price"><span class="new">₹599.99</span></div>
+            <a class="btn" href="#">Add to cart</a>
+          </div>
+        </article>
+        <!-- Product 4 -->
+        <article class="card">
+          <div class="thumb">
+            <a href="#"><img src="https://live.codenish.com/cache/images/demo/product/3-600x600.png" alt="Dawn Stroll Lightweight Trench" /></a>
+          </div>
+          <div class="body">
+            <h3 class="name"><a href="#">Dawn Stroll Lightweight Spring Trench Coat</a></h3>
+            <div class="price"><span class="old">₹2,199.99</span> <span class="new">₹399.99</span></div>
+            <a class="btn" href="#">Add to cart</a>
+          </div>
+        </article>
+        <!-- Product 5 -->
+        <article class="card">
+          <div class="thumb">
+            <a href="#"><img src="https://live.codenish.com/cache/images/demo/product/4-600x600.png" alt="Star Orbit Sweater" /></a>
+          </div>
+          <div class="body">
+            <h3 class="name"><a href="#">Starry Track Personalized Casual Sweater Night Sky Stars</a></h3>
+            <div class="price"><span class="old">₹2,199.99</span> <span class="new">₹299.99</span></div>
+            <a class="btn" href="#">Add to cart</a>
+          </div>
+        </article>
+        <!-- Product 6 -->
+        <article class="card">
+          <div class="thumb">
+            <a href="#"><img src="https://live.codenish.com/cache/images/demo/product/6-600x600.png" alt="Minimalist Classic Shirt" /></a>
+          </div>
+          <div class="body">
+            <h3 class="name"><a href="#">Minimalist Style Classic Shirt Simple but Not Simple</a></h3>
+            <div class="price"><span class="new">₹99.66</span></div>
+            <a class="btn" href="#">Add to cart</a>
+          </div>
+        </article>
+        <!-- Product 7 -->
+        <article class="card">
+          <div class="thumb">
+            <a href="#"><img src="https://live.codenish.com/cache/images/demo/product/7-600x600.png" alt="High-Waist Jeans" /></a>
+          </div>
+          <div class="body">
+            <h3 class="name"><a href="#">Modern Retro Style High Waist Jeans Classic Reappearance</a></h3>
+            <div class="price"><span class="new">₹69.66</span></div>
+            <a class="btn" href="#">Add to cart</a>
+          </div>
+        </article>
+        <!-- Product 8 -->
+        <article class="card">
+          <div class="thumb">
+            <a href="#"><img src="https://live.codenish.com/cache/images/demo/product/8-600x600.png" alt="Lace Top" /></a>
+          </div>
+          <div class="body">
+            <h3 class="name"><a href="#">Elegant Lace Transparent Sexy Top Female Charm</a></h3>
+            <div class="price"><span class="new">₹49.66</span></div>
+            <a class="btn" href="#">Add to cart</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Blog / News ===== -->
+  <section class="section blog">
+    <div class="container">
+      <header class="section-header">
+        <h2 class="section-title">News Blog</h2>
+        <p class="section-sub">We've curated a selection of apparel at a limited time discount for a great value shopping experience.</p>
+      </header>
+      <div class="grid">
+        <article class="card">
+          <div class="thumb"><a href="#"><img src="https://live.codenish.com/cache/images/demo/news/4-300x300.jpg" alt="New version released" /></a></div>
+          <div class="body">
+            <div class="pill">Industry News</div>
+            <h3 class="name mt-2"><a href="#">New version released!</a></h3>
+            <div class="meta mt-2"><span>InnoShop</span><span>•</span><time datetime="2025-09-02">2025 09 02</time></div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="thumb"><a href="#"><img src="https://live.codenish.com/cache/images/demo/news/3-300x300.jpg" alt="Ecommerce AI" /></a></div>
+          <div class="body">
+            <div class="pill">Industry News</div>
+            <h3 class="name mt-2"><a href="#">Ecommerce integrated with AI</a></h3>
+            <div class="meta mt-2"><time datetime="2025-09-02">2025 09 02</time></div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="thumb"><a href="#"><img src="https://live.codenish.com/cache/images/demo/news/2-300x300.jpg" alt="New generation ecommerce" /></a></div>
+          <div class="body">
+            <div class="pill">Product Updates</div>
+            <h3 class="name mt-2"><a href="#">New generation ecommerce system</a></h3>
+            <div class="meta mt-2"><span>InnoShop</span><span>•</span><time datetime="2025-09-02">2025 09 02</time></div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="thumb"><a href="#"><img src="https://live.codenish.com/cache/images/demo/news/1-300x300.jpg" alt="InnoShop" /></a></div>
+          <div class="body">
+            <div class="pill">Product Updates</div>
+            <h3 class="name mt-2"><a href="#">InnoShop – Innovative ecommerce</a></h3>
+            <div class="meta mt-2"><span>InnoShop</span><span>•</span><time datetime="2025-09-02">2025 09 02</time></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="footer-top">
+      <div class="container footer-cols">
+        <section>
+          <div class="footer-title">About</div>
+          <p><strong>Coorg Natural, Coorg Coffee, Authentic Coorg Coffee, Natural products from Coorg, Pure coffee online, Buy Coorg coffee, Arabica coffee, Robusta coffee, Organic coffee India, Fresh roasted coffee, Natural food products</strong></p>
+        </section>
+        <section>
+          <div class="footer-title">Products</div>
+          <nav class="footer-links">
+            <a href="#">Women</a>
+            <a href="#">Men</a>
+            <a href="#">Children</a>
+          </nav>
+        </section>
+        <section>
+          <div class="footer-title">News</div>
+          <nav class="footer-links">
+            <a href="#">Product Updates</a>
+            <a href="#">Industry News</a>
+          </nav>
+        </section>
+        <section>
+          <div class="footer-title">Pages</div>
+          <nav class="footer-links">
+            <a href="#">Creations</a>
+            <a href="#">Services</a>
+            <a href="#">About</a>
+          </nav>
+        </section>
+        <section>
+          <div class="footer-title">Specials</div>
+          <nav class="footer-links">
+            <a href="#">—</a>
+          </nav>
+        </section>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <div>
+        Powered By <a href="https://www.innoshop.com" target="_blank" rel="noreferrer">InnoShop</a>
+        <span class="mt-2" style="margin-left:8px; opacity:.7">© 2025 All Rights Reserved</span>
+      </div>
+      <div class="payments">
+        <img src="https://live.codenish.com/images/demo/payment/1.png" alt="payment" height="28" />
+        <img src="https://live.codenish.com/images/demo/payment/2.png" alt="payment" height="28" />
+        <img src="https://live.codenish.com/images/demo/payment/3.png" alt="payment" height="28" />
+        <img src="https://live.codenish.com/images/demo/payment/4.png" alt="payment" height="28" />
+        <img src="https://live.codenish.com/images/demo/payment/5.png" alt="payment" height="28" />
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
+
+
